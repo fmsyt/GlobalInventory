@@ -1,0 +1,4 @@
+name: GlobalStorage
+version: '${project.version}'
+main: com.motsuni.globalstorage.GlobalStorage
+api-version: '1.20'
