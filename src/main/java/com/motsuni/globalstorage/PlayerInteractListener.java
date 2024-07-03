@@ -12,10 +12,10 @@ import org.bukkit.inventory.Inventory;
 
 public class PlayerInteractListener implements Listener {
 
-    protected Inventory inventory;
+    protected GlobalInventoryManager manager;
 
-    public PlayerInteractListener(Inventory inventory) {
-        this.inventory = inventory;
+    public PlayerInteractListener(GlobalInventoryManager manager) {
+        this.manager = manager;
     }
 
     @EventHandler
@@ -37,7 +37,8 @@ public class PlayerInteractListener implements Listener {
 
         Player player = event.getPlayer();
         player.chat("GlobalInventory Opened");
-        player.openInventory(this.inventory);
+
+        player.openInventory(this.manager.inventories.getFirst());
     }
 
 }

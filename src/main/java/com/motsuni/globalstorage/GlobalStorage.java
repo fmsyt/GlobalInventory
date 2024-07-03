@@ -15,7 +15,7 @@ public final class GlobalStorage extends JavaPlugin {
         // プラグインマネージャー
         PluginManager manager = server.getPluginManager();
 
-        this.globalInventoryManager = new GlobalInventoryManager(this, manager);
+        this.globalInventoryManager = new GlobalInventoryManager(this);
         this.globalInventoryManager.init();
     }
 
