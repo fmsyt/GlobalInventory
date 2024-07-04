@@ -81,35 +81,7 @@ public class GlobalInventoryManager {
 
         System.out.println("[GlobalStorage] Inventory Length: " + inventoryLength);
 
-        for (int i = 0; i < this.globalItems.size(); i++) {
-
-            ModelGlobalItem globalItem = this.globalItems.get(i);
-            ItemStack itemStack = globalItem.getInterfaceItemStack();
-
-            Material type = globalItem.getType();
-            itemStack.setType(type);
-
-            ItemMeta meta = itemStack.getItemMeta();
-            String lore = null;
-            if (meta != null) {
-                List<String> lores = meta.getLore();
-                if (lores != null) {
-                    // array to string
-                    lore = String.join(",", lores);
-                }
-
-            }
-
-            int storageIndex = (int) Math.floor((double) i / GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE);
-
-            System.out.println("[GlobalStorage] Loaded item: " + itemStack.getType().name() + ", Amount: " + globalItem.getAmount() + ", hasMeta: " + (meta != null) + ", lore: " + lore + ", storageIndex: " + storageIndex);
-
-            int amount = itemStack.getAmount();
-            Inventory inventory = this.inventories.get(storageIndex);
-
-            inventory.addItem(itemStack);
-
-        }
+        this.organizeInventory();
     }
 
 
@@ -119,6 +91,7 @@ public class GlobalInventoryManager {
         // https://qiita.com/rushuu_r/items/677bf24db821838a7569#%E3%82%A4%E3%83%B3%E3%83%99%E3%83%B3%E3%83%88%E3%83%AA%E4%BD%9C%E6%88%90
         // https://hub.spigotmc.org/javadocs/spigot/org/bukkit/util/io/BukkitObjectOutputStream.html
 
+        this.removeNoItemInGlobalItems();
         this.saveGlobalItems();
     }
 
@@ -128,6 +101,66 @@ public class GlobalInventoryManager {
     }
 
     public void preOpenInventory(Inventory inventory) {
+        this.updateInventory(inventory);
+    }
+
+    public void updateInventory(Inventory inventory) {
+        if (this.isManagedInventory(inventory)) {
+            return;
+        }
+
+        this.removeNoItemInInventory(inventory);
+
+        this.organizeInventory();
+        this.updateRoleInInventory(inventory);
+    }
+
+    public void organizeInventory() {
+
+        for (Inventory inventory: this.inventories) {
+            inventory.clear();
+        }
+
+        for (int i = 0; i < this.globalItems.size(); i++) {
+
+            ModelGlobalItem globalItem = this.globalItems.get(i);
+            if (globalItem.getAmount() == 0) {
+                continue;
+            }
+
+            ItemStack itemStack = globalItem.getInterfaceItemStack();
+
+            int storageIndex = (int) Math.floor((double) i / GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE);
+            Inventory inventory = this.inventories.get(storageIndex);
+
+            inventory.addItem(itemStack);
+        }
+    }
+
+    public void removeNoItemInGlobalItems() {
+        this.globalItems = this.globalItems.stream()
+                .filter(item -> item.getAmount() > 0)
+                .collect(Collectors.toList());
+    }
+
+    public void removeNoItemInInventory(Inventory inventory) {
+        if (this.isManagedInventory(inventory)) {
+            return;
+        }
+
+        for (ItemStack itemStack: inventory.getContents()) {
+            if (itemStack == null) {
+                continue;
+            }
+
+            ModelGlobalItem globalItem = this.getGlobalItemFromInterfaceItemStack(itemStack);
+            if (globalItem == null || globalItem.getAmount() == 0) {
+                inventory.remove(itemStack);
+            }
+        }
+    }
+
+    public void updateRoleInInventory(Inventory inventory) {
         if (this.isManagedInventory(inventory)) {
             return;
         }

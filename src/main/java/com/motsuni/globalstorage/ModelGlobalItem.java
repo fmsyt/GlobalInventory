@@ -155,7 +155,7 @@ public class ModelGlobalItem implements Serializable {
             amount = this.amount;
         }
 
-        ItemStack item = this.interfaceItemStack.clone();
+        ItemStack item = this.originalItemStack.clone();
         item.setAmount(amount);
 
         this.addAmount(-amount);
