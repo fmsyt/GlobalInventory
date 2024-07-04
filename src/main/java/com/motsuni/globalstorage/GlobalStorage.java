@@ -10,17 +10,12 @@ public final class GlobalStorage extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Server server = getServer();
-
-        // プラグインマネージャー
-        PluginManager manager = server.getPluginManager();
-
         this.globalInventoryManager = new GlobalInventoryManager(this);
         this.globalInventoryManager.init();
     }
 
     @Override
     public void onDisable() {
-        // this.globalInventoryManager.save();
+         this.globalInventoryManager.save();
     }
 }

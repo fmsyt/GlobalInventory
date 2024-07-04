@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 
 public class PlayerInteractListener implements Listener {
@@ -19,7 +20,7 @@ public class PlayerInteractListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
+    public void onPlayerInteract(@NotNull PlayerInteractEvent event) {
 
         Action action = event.getAction();
         if (action != Action.RIGHT_CLICK_BLOCK) {

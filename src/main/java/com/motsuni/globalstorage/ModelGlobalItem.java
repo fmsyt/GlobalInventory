@@ -57,7 +57,7 @@ public class ModelGlobalItem implements Serializable {
         return this.interfaceItemStack;
     }
 
-    public void updateLore(ItemStack itemStack) {
+    public void updateLore(@NotNull ItemStack itemStack) {
         ItemMeta meta = itemStack.getItemMeta();
         if (meta != null) {
 

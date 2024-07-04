@@ -39,9 +39,6 @@ public class StorageListener implements Listener {
     public void onClicked(@NotNull InventoryClickEvent event) {
 
         Inventory globalInventory = event.getInventory();
-        if (globalInventory == null) {
-            return;
-        }
 
         if (this.manager.isManagedInventory(globalInventory)) {
             return;
@@ -119,8 +116,6 @@ public class StorageListener implements Listener {
             return new ItemStack(Material.AIR, 0);
         }
 
-//        ItemStack itemStack = globalItem.pullStackedItemStack();
-
         int incomingAmount = Math.min(globalItem.getMaxStackSize(), globalItem.getAmount());
 
         int currentAmountOnGlobal = globalItem.getAmount();
@@ -170,9 +165,9 @@ public class StorageListener implements Listener {
     @EventHandler
     public void onStorageClosed(@NotNull InventoryCloseEvent event) {
 
+        // 閉じられたインベントリが管理対象のインベントリでない場合、何もしない
         Inventory inventory = event.getInventory();
-
-        if (this.manager.isManagedInventory(event.getInventory())) {
+        if (this.manager.isManagedInventory(inventory)) {
             return;
         }
 
