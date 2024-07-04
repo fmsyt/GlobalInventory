@@ -54,23 +54,34 @@ public class ModelGlobalItem implements Serializable {
      * @return ItemStack
      */
     public ItemStack getInterfaceItemStack() {
+        return this.interfaceItemStack;
+    }
 
-        ItemStack item = this.originalItemStack.clone();
-
-        ItemMeta meta = this.originalItemStack.getItemMeta();
+    public void updateLore(ItemStack itemStack) {
+        ItemMeta meta = itemStack.getItemMeta();
         if (meta != null) {
-            List<String> lore = meta.getLore();
-            if (lore != null) {
-                lore.set(0, "保管数: " + this.amount);
+
+            List<String> currentLore = null;
+            ItemMeta originalMeta = this.originalItemStack.getItemMeta();
+            if (originalMeta != null) {
+                currentLore = originalMeta.getLore();
+            }
+
+            if (currentLore != null) {
+                currentLore.add("保管数: " + this.amount);
+                meta.setLore(currentLore);
+
             } else {
-                lore = new ArrayList<>();
+                List<String> lore = new ArrayList<>();
                 lore.add("保管数: " + this.amount);
 
                 meta.setLore(lore);
             }
+
+            itemStack.setItemMeta(meta);
         }
 
-        return this.interfaceItemStack;
+        this.interfaceItemStack = itemStack;
     }
 
     /**

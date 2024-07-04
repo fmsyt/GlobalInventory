@@ -122,6 +122,29 @@ public class GlobalInventoryManager {
         this.saveGlobalItems();
     }
 
+    public void preOpenInventory(int inventoryIndex) {
+        Inventory inventory = this.inventories.get(inventoryIndex);
+        this.preOpenInventory(inventory);
+    }
+
+    public void preOpenInventory(Inventory inventory) {
+        if (this.isManagedInventory(inventory)) {
+            return;
+        }
+
+        for (ItemStack itemStack: inventory.getContents()) {
+            if (itemStack == null) {
+                continue;
+            }
+
+            ModelGlobalItem globalItem = this.getGlobalItemFromInterfaceItemStack(itemStack);
+            if (globalItem == null) {
+                continue;
+            }
+
+            globalItem.updateLore(itemStack);
+        }
+    }
 
 
 
