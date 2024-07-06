@@ -131,7 +131,18 @@ public class GlobalInventoryManager {
             ItemStack itemStack = globalItem.getInterfaceItemStack();
 
             int storageIndex = (int) Math.floor((double) i / GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE);
-            Inventory inventory = this.inventories.get(storageIndex);
+
+            Inventory inventory = null;
+            if (storageIndex <= this.inventories.size()) {
+                inventory = this.inventories.get(storageIndex);
+
+            } else {
+                inventory = getServer().createInventory(null, GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE, "GlobalStorage");
+                this.inventories.add(inventory);
+
+                System.out.println("[GlobalStorage] Added new inventory: " + storageIndex);
+            }
+
 
             inventory.addItem(itemStack);
         }
