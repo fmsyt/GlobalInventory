@@ -97,7 +97,7 @@ public class StorageListener implements Listener {
             System.out.println("Item Moved to Player Inventory");
         }
 
-        this.manager.preOpenInventory(globalInventory);
+        this.manager.updateInventory(globalInventory);
     }
 
 

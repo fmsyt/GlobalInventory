@@ -121,28 +121,23 @@ public class GlobalInventoryManager {
             inventory.clear();
         }
 
-        for (int i = 0; i < this.globalItems.size(); i++) {
+        for (ModelGlobalItem globalItem : this.globalItems) {
 
-            ModelGlobalItem globalItem = this.globalItems.get(i);
             if (globalItem.getAmount() == 0) {
                 continue;
             }
 
             ItemStack itemStack = globalItem.getInterfaceItemStack();
 
-            int storageIndex = (int) Math.floor((double) i / GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE);
+            Inventory inventory = this.inventories.stream()
+                    .filter(inv -> inv.firstEmpty() != -1)
+                    .findFirst()
+                    .orElse(null);
 
-            Inventory inventory = null;
-            if (storageIndex <= this.inventories.size()) {
-                inventory = this.inventories.get(storageIndex);
-
-            } else {
+            if (inventory == null) {
                 inventory = getServer().createInventory(null, GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE, "GlobalStorage");
                 this.inventories.add(inventory);
-
-                System.out.println("[GlobalStorage] Added new inventory: " + storageIndex);
             }
-
 
             inventory.addItem(itemStack);
         }
