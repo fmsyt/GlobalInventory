@@ -100,6 +100,8 @@ public class GlobalInventoryManager {
 
         this.removeNoItemInGlobalItems();
         this.saveGlobalItems();
+
+        server.broadcastMessage("保存しました");
     }
 
     public void preOpenInventory(int inventoryIndex) {
