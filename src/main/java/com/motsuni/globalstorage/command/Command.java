@@ -35,6 +35,8 @@ public class Command implements CommandExecutor {
         String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 
         switch (key) {
+            case "help":
+                return help(commandSender);
             case "give":
                 return give(commandSender, newArgs);
             case "inventory":
@@ -42,6 +44,21 @@ public class Command implements CommandExecutor {
             default:
                 return false;
         }
+    }
+
+    private boolean help(CommandSender commandSender) {
+        if (!(commandSender instanceof Player)) {
+            return true;
+        }
+
+        Player player = (Player) commandSender;
+        player.sendMessage("GlobalStorage Help");
+        player.sendMessage("/globalstorage give: インベントリを開くためのアイテムを受け取る");
+        player.sendMessage("/globalstorage inventory open [page]: インベントリを開く");
+        player.sendMessage("/globalstorage inventory save: インベントリを保存する");
+        player.sendMessage("/globalstorage inventory clear: インベントリの中身をすべて削除する");
+
+        return true;
     }
 
     private boolean give(CommandSender commandSender, String[] args) {

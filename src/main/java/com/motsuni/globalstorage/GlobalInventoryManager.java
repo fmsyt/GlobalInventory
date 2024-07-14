@@ -40,7 +40,7 @@ public class GlobalInventoryManager {
 
     protected List<Inventory> inventories;
 
-    public GlobalInventoryManager(JavaPlugin plugin) {
+    public GlobalInventoryManager(@NotNull JavaPlugin plugin) {
         this.inventories = new ArrayList<>();
         this.globalItems = new ArrayList<>();
 
