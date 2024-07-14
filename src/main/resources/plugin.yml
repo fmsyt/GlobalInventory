@@ -3,6 +3,8 @@ version: '${project.version}'
 main: com.motsuni.globalstorage.GlobalStorage
 api-version: '1.20'
 commands:
-  gi:
+  globalinventory:
     description: Get interface of GlobalStorage
-    usage: /gi [@p]
+    usage: /globalinventory <give | inventory <open [page] | save | clear> >
+    aliases:
+      - gi

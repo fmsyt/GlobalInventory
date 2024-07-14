@@ -1,12 +1,14 @@
 package com.motsuni.globalstorage;
 
-import org.bukkit.Material;
+import com.motsuni.globalstorage.command.Command;
 import org.bukkit.Server;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +40,7 @@ public class GlobalInventoryManager {
 
     protected List<Inventory> inventories;
 
-    public GlobalInventoryManager(Plugin plugin) {
+    public GlobalInventoryManager(JavaPlugin plugin) {
         this.inventories = new ArrayList<>();
         this.globalItems = new ArrayList<>();
 
@@ -46,6 +48,11 @@ public class GlobalInventoryManager {
 
         this.plugin = plugin;
         this.manager = server.getPluginManager();
+
+        PluginCommand gi = plugin.getCommand("globalinventory");
+        if (gi != null) {
+            gi.setExecutor(new Command(this));
+        }
     }
 
 
@@ -298,6 +305,18 @@ public class GlobalInventoryManager {
         return amount;
     }
 
+    public void openInventory(Player player) {
+        this.openInventory(player, 0);
+    }
+
+    public void openInventory(Player player, int inventoryIndex) {
+        player.chat("GlobalInventory Opened");
+
+        this.preOpenInventory(this.inventories.get(inventoryIndex));
+
+        player.openInventory(this.inventories.get(inventoryIndex));
+    }
+
 
     public void setItemAmount(@NotNull ItemStack itemStack, int amount) {
 
@@ -392,5 +411,13 @@ public class GlobalInventoryManager {
                 .orElse(null);
 
         return sameItem;
+    }
+
+    public int getInventoryLength() {
+        return this.inventories.size();
+    }
+
+    public void removeAllItems() {
+        this.globalItems.clear();
     }
 }

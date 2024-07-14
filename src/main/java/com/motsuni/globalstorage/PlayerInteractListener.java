@@ -35,12 +35,7 @@ public class PlayerInteractListener implements Listener {
         event.setCancelled(true);
 
         Player player = event.getPlayer();
-        player.chat("GlobalInventory Opened");
-
-        Inventory inventory = this.manager.inventories.getFirst();
-        this.manager.preOpenInventory(inventory);
-
-        player.openInventory(inventory);
+        this.manager.openInventory(player);
     }
 
 }
