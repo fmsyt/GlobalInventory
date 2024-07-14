@@ -14,7 +14,7 @@ public class ItemStackKey {
 
         ItemMeta meta = this.key.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName("GlobalInventory Key");
+            meta.setDisplayName("GlobalStorage");
         }
 
         this.key.setItemMeta(meta);
