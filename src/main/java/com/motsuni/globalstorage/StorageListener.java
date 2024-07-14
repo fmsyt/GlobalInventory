@@ -7,8 +7,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;;
 
 public class StorageListener implements Listener {
 
@@ -46,8 +45,8 @@ public class StorageListener implements Listener {
 
         event.setCancelled(true);
 
-        InventoryAction action = event.getAction();
-        System.out.println("Inventory Clicked: " + action.name());
+        // InventoryAction action = event.getAction();
+        // System.out.println("Inventory Clicked: " + action.name());
 
         // 今スロットにあるアイテム
         ItemStack clickedItemStack = event.getCurrentItem();
@@ -72,8 +71,6 @@ public class StorageListener implements Listener {
             return;
         }
 
-        Inventory from = null;
-        Inventory to = null;
 
         if (clickedInventory instanceof PlayerInventory) {
             // クリックされたインベントリがプレイヤーのインベントリの場合、GlobalInventoryにアイテムを追加する

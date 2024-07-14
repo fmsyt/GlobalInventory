@@ -49,7 +49,7 @@ public class GlobalInventoryManager {
         this.plugin = plugin;
         this.manager = server.getPluginManager();
 
-        PluginCommand gi = plugin.getCommand("globalinventory");
+        PluginCommand gi = plugin.getCommand("globalstorage");
         if (gi != null) {
             gi.setExecutor(new Command(this));
         }
