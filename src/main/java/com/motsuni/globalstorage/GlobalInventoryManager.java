@@ -1,6 +1,8 @@
 package com.motsuni.globalstorage;
 
 import com.motsuni.globalstorage.command.Command;
+import com.motsuni.globalstorage.itemstack.ItemStackEmpty;
+import com.motsuni.globalstorage.itemstack.NavigatorManager;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -31,16 +33,22 @@ import static org.bukkit.Bukkit.getServer;
 
 public class GlobalInventoryManager {
 
-    public static final int MAX_INVENTORY_SLOT_SIZE = 54;
+    public static final int MAX_INVENTORY_SLOT_SIZE_WITH_NAVIGATION = 54;
+    public static final int MAX_INVENTORY_SLOT_SIZE = MAX_INVENTORY_SLOT_SIZE_WITH_NAVIGATION - 9;
 
     protected Plugin plugin;
     protected PluginManager manager;
 
     protected List<ModelGlobalItem> globalItems;
-
     protected List<Inventory> inventories;
 
+    protected NavigatorManager navigatorManager;
+
+    protected Map<Player, Integer> openedInventoryMap = new HashMap<>();
+
     public GlobalInventoryManager(@NotNull JavaPlugin plugin) {
+        this.navigatorManager = new NavigatorManager();
+
         this.inventories = new ArrayList<>();
         this.globalItems = new ArrayList<>();
 
@@ -82,7 +90,7 @@ public class GlobalInventoryManager {
         this.inventories = new ArrayList<>();
 
         for (int i = 0; i < inventoryLength; i++) {
-            Inventory inventory = server.createInventory(null, GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE, "GlobalStorage");
+            Inventory inventory = this.createInventory();
             this.inventories.add(inventory);
         }
 
@@ -104,11 +112,6 @@ public class GlobalInventoryManager {
         server.broadcastMessage("保存しました");
     }
 
-    public void preOpenInventory(int inventoryIndex) {
-        Inventory inventory = this.inventories.get(inventoryIndex);
-        this.preOpenInventory(inventory);
-    }
-
     public void preOpenInventory(Inventory inventory) {
         this.updateInventory(inventory);
     }
@@ -124,10 +127,32 @@ public class GlobalInventoryManager {
         this.updateRoleInInventory(inventory);
     }
 
+    public void setNavigationSlots(@NotNull Inventory inventory) {
+
+        int inventoryIndex = this.inventories.indexOf(inventory);
+
+        ItemStack previous = this.navigatorManager.getPrevious().getItemStack(inventoryIndex);
+        ItemStack next = this.navigatorManager.getNext().getItemStack(inventoryIndex);
+        ItemStack empty = ItemStackEmpty.getInstance().getItemStack();
+
+        for (int i = 0; i < 9; i++) {
+            inventory.setItem(GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE + i, empty.clone());
+        }
+
+        if (inventoryIndex > 0) {
+            inventory.setItem(GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE, previous);
+        }
+
+        if (inventoryIndex < this.inventories.size() - 1) {
+            inventory.setItem(GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE + 8, next);
+        }
+    }
+
     public void organizeInventory() {
 
         for (Inventory inventory: this.inventories) {
             inventory.clear();
+            this.setNavigationSlots(inventory);
         }
 
         for (ModelGlobalItem globalItem : this.globalItems) {
@@ -144,12 +169,21 @@ public class GlobalInventoryManager {
                     .orElse(null);
 
             if (inventory == null) {
-                inventory = getServer().createInventory(null, GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE, "GlobalStorage");
+                inventory = this.createInventory();
+                this.setNavigationSlots(inventory);
+
                 this.inventories.add(inventory);
             }
 
             inventory.addItem(itemStack);
         }
+    }
+
+    public Inventory createInventory() {
+        int currentPages = this.inventories.size() + 1;
+
+        String inventoryName = String.format("GlobalStorage -%d-", currentPages);
+        return getServer().createInventory(null, GlobalInventoryManager.MAX_INVENTORY_SLOT_SIZE_WITH_NAVIGATION, inventoryName);
     }
 
     public void removeNoItemInGlobalItems() {
@@ -180,7 +214,8 @@ public class GlobalInventoryManager {
             return;
         }
 
-        for (ItemStack itemStack: inventory.getContents()) {
+        for (int i = 0; i < MAX_INVENTORY_SLOT_SIZE; i++) {
+            ItemStack itemStack = inventory.getItem(i);
             if (itemStack == null) {
                 continue;
             }
@@ -311,12 +346,44 @@ public class GlobalInventoryManager {
         this.openInventory(player, 0);
     }
 
-    public void openInventory(Player player, int inventoryIndex) {
-        player.chat("GlobalInventory Opened");
-
+    public void openInventory(@NotNull Player player, int inventoryIndex) {
+        this.openedInventoryMap.put(player, inventoryIndex);
         this.preOpenInventory(this.inventories.get(inventoryIndex));
-
         player.openInventory(this.inventories.get(inventoryIndex));
+    }
+
+    public void openNextInventory(@NotNull Player player) {
+        Integer currentIndex = this.openedInventoryMap.get(player);
+        if (currentIndex == null) {
+            currentIndex = 0;
+        }
+
+        int nextIndex = currentIndex + 1;
+
+        if (nextIndex >= this.inventories.size()) {
+            return;
+        }
+
+        this.openInventory(player, nextIndex);
+    }
+
+    public void openPreviousInventory(@NotNull Player player) {
+        Integer currentIndex = this.openedInventoryMap.get(player);
+        if (currentIndex == null) {
+            currentIndex = this.inventories.size() - 1;
+        }
+
+        int previousIndex = currentIndex - 1;
+
+        if (previousIndex < 0) {
+            return;
+        }
+
+        this.openInventory(player, previousIndex);
+    }
+
+    public void closeInventory(@NotNull Player player) {
+        this.openedInventoryMap.remove(player);
     }
 
 

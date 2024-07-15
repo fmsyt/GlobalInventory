@@ -1,6 +1,7 @@
 package com.motsuni.globalstorage;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
@@ -43,6 +44,8 @@ public class StorageListener implements Listener {
             return;
         }
 
+        InventoryAction action = event.getAction();
+
         event.setCancelled(true);
 
         // InventoryAction action = event.getAction();
@@ -54,13 +57,26 @@ public class StorageListener implements Listener {
             return;
         }
 
-        if (clickedItemStack.getType() == Material.AIR) {
-            // クリックされたスロットにアイテムがない場合、何もしない
+        int pickedAmount = clickedItemStack.getAmount();
+        if (pickedAmount == 0) {
             return;
         }
 
-        int pickedAmount = clickedItemStack.getAmount();
-        if (pickedAmount == 0) {
+        // 前のページを指すアイテムがクリックされた場合、次のページを表示する
+        if (this.manager.navigatorManager.getPrevious().hasSimilar(clickedItemStack)) {
+            Player player = (Player) event.getWhoClicked();
+            player.sendMessage("前のページを表示します");
+            player.closeInventory();
+            this.manager.openPreviousInventory(player);
+            return;
+        }
+
+        // 次のページを指すアイテムがクリックされた場合、次のページを表示する
+        if (this.manager.navigatorManager.getNext().hasSimilar(clickedItemStack)) {
+            Player player = (Player) event.getWhoClicked();
+            player.sendMessage("次のページを表示します");
+            player.closeInventory();
+            this.manager.openNextInventory(player);
             return;
         }
 
@@ -168,7 +184,10 @@ public class StorageListener implements Listener {
             return;
         }
 
+        Player player = (Player) event.getPlayer();
+
         event.getPlayer().sendMessage("Global Inventory Closed");
+        this.manager.closeInventory(player);
         this.manager.save();
     }
 }
