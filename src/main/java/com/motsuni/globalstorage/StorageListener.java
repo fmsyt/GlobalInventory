@@ -66,7 +66,7 @@ public class StorageListener implements Listener {
         if (this.manager.navigatorManager.getPrevious().hasSimilar(clickedItemStack)) {
             Player player = (Player) event.getWhoClicked();
             player.sendMessage("前のページを表示します");
-            player.closeInventory();
+
             this.manager.openPreviousInventory(player);
             return;
         }
@@ -75,7 +75,7 @@ public class StorageListener implements Listener {
         if (this.manager.navigatorManager.getNext().hasSimilar(clickedItemStack)) {
             Player player = (Player) event.getWhoClicked();
             player.sendMessage("次のページを表示します");
-            player.closeInventory();
+            // player.closeInventory();
             this.manager.openNextInventory(player);
             return;
         }

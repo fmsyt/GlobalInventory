@@ -6,7 +6,7 @@
 
   <groupId>com.motsuni</groupId>
   <artifactId>GlobalStorage</artifactId>
-  <version>1.20.6-0.3.0-dev</version>
+  <version>1.20.6-0.3.1</version>
   <packaging>jar</packaging>
 
   <name>GlobalStorage</name>

@@ -44,7 +44,7 @@ public class GlobalInventoryManager {
 
     protected NavigatorManager navigatorManager;
 
-    protected Map<Player, Integer> openedInventoryMap = new HashMap<>();
+    protected Map<UUID, Integer> openedInventoryMap = new HashMap<>();
 
     public GlobalInventoryManager(@NotNull JavaPlugin plugin) {
         this.navigatorManager = new NavigatorManager();
@@ -347,19 +347,21 @@ public class GlobalInventoryManager {
     }
 
     public void openInventory(@NotNull Player player, int inventoryIndex) {
-        this.openedInventoryMap.put(player, inventoryIndex);
+        UUID uuid = player.getUniqueId();
+        player.sendMessage(String.format("UUID: %s: Index: %d", uuid.toString(), inventoryIndex));
+
+        this.openedInventoryMap.put(player.getUniqueId(), inventoryIndex);
         this.preOpenInventory(this.inventories.get(inventoryIndex));
         player.openInventory(this.inventories.get(inventoryIndex));
     }
 
     public void openNextInventory(@NotNull Player player) {
-        Integer currentIndex = this.openedInventoryMap.get(player);
+        Integer currentIndex = this.openedInventoryMap.get(player.getUniqueId());
         if (currentIndex == null) {
             currentIndex = 0;
         }
 
         int nextIndex = currentIndex + 1;
-
         if (nextIndex >= this.inventories.size()) {
             return;
         }
@@ -368,13 +370,12 @@ public class GlobalInventoryManager {
     }
 
     public void openPreviousInventory(@NotNull Player player) {
-        Integer currentIndex = this.openedInventoryMap.get(player);
+        Integer currentIndex = this.openedInventoryMap.get(player.getUniqueId());
         if (currentIndex == null) {
             currentIndex = this.inventories.size() - 1;
         }
 
         int previousIndex = currentIndex - 1;
-
         if (previousIndex < 0) {
             return;
         }
