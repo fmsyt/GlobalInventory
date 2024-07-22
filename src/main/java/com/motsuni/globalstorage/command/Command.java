@@ -57,6 +57,7 @@ public class Command implements CommandExecutor {
         player.sendMessage("/globalstorage inventory open [page]: インベントリを開く");
         player.sendMessage("/globalstorage inventory save: インベントリを保存する");
         player.sendMessage("/globalstorage inventory clear: インベントリの中身をすべて削除する");
+        player.sendMessage("/globalstorage inventory sort [asc|desc]: インベントリをソートする");
 
         return true;
     }

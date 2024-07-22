@@ -490,4 +490,43 @@ public class GlobalInventoryManager {
     public void removeAllItems() {
         this.globalItems.clear();
     }
+
+
+    public void sortByName() {
+        this.sortByName("asc");
+    }
+
+    /**
+     * アイテムを名前でソートする
+     * @param order String asc or desc
+     */
+    public void sortByName(String order) {
+        this.globalItems.sort((a, b) -> {
+            if (order.equals("asc")) {
+                return a.getType().name().compareTo(b.getType().name());
+            }
+
+            return b.getType().name().compareTo(a.getType().name());
+        });
+        this.organizeInventory();
+    }
+
+    public void sortByType() {
+        this.sortByType("asc");
+    }
+
+    /**
+     * アイテムをキーでソートする
+     * @param order String asc or desc
+     */
+    public void sortByType(String order) {
+        this.globalItems.sort((a, b) -> {
+            if (order.equals("asc")) {
+                return a.getType().compareTo(b.getType());
+            }
+
+            return b.getType().compareTo(a.getType());
+        });
+        this.organizeInventory();
+    }
 }

@@ -4,6 +4,7 @@ import com.motsuni.globalstorage.GlobalInventoryManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CommandInventory extends SubCommand {
 
@@ -20,6 +21,8 @@ public class CommandInventory extends SubCommand {
                 return clear();
             case "save":
                 return save();
+            case "sort":
+                return sort(this.args.length > 0 ? this.args[0] : null);
             default:
                 return false;
         }
@@ -73,6 +76,29 @@ public class CommandInventory extends SubCommand {
         }
 
         manager.save();
+        return true;
+    }
+
+    public boolean sort(@Nullable String order) {
+        if (order == null) {
+            manager.sortByType();
+            if (commandSender instanceof Player) {
+                ((Player) commandSender).chat("ソートしました");
+            }
+
+            return true;
+        }
+
+        String _order = order.toLowerCase();
+        if (!(_order.equals("asc") || _order.equals("desc"))) {
+            return false;
+        }
+
+        manager.sortByName(_order);
+        if (commandSender instanceof Player) {
+            ((Player) commandSender).chat("ソートしました");
+        }
+
         return true;
     }
 }
