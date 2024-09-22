@@ -175,7 +175,12 @@ public class GlobalInventoryManager {
                 this.inventories.add(inventory);
             }
 
-            inventory.addItem(itemStack);
+            try {
+                inventory.addItem(itemStack);
+            } catch (Exception e) {
+                String itemName = itemStack.getType().name();
+                System.err.println("[GlobalStorage] Failed to add item: " + itemName);
+            }
         }
     }
 
