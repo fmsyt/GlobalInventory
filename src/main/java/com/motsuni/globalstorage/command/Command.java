@@ -4,18 +4,46 @@ import com.motsuni.globalstorage.GlobalInventoryManager;
 import com.motsuni.globalstorage.itemstack.ItemStackKey;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 
-public class Command implements CommandExecutor {
+public class Command implements CommandExecutor, TabExecutor {
 
     protected GlobalInventoryManager manager;
 
     public Command(GlobalInventoryManager manager) {
         this.manager = manager;
+    }
+
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull org.bukkit.command.Command command, @NotNull String s, @NotNull String[] args) {
+
+        // usage: /globalstorage <give | inventory <open [page] | save | sort [asc | desc]> >
+
+        if (args.length == 1) {
+            return Arrays.asList("help", "give", "inventory");
+        }
+
+        if (args.length == 2) {
+            if (args[0].equals("inventory")) {
+                return Arrays.asList("open", "save", "sort");
+            }
+        }
+
+        if (args.length == 3) {
+            if (args[0].equals("inventory") && args[1].equals("sort")) {
+                return Arrays.asList("asc", "desc");
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -56,8 +84,8 @@ public class Command implements CommandExecutor {
         player.sendMessage("/globalstorage give: インベントリを開くためのアイテムを受け取る");
         player.sendMessage("/globalstorage inventory open [page]: インベントリを開く");
         player.sendMessage("/globalstorage inventory save: インベントリを保存する");
-        player.sendMessage("/globalstorage inventory clear: インベントリの中身をすべて削除する");
         player.sendMessage("/globalstorage inventory sort [asc|desc]: インベントリをソートする");
+        // player.sendMessage("/globalstorage inventory clear: インベントリの中身をすべて削除する");
 
         return true;
     }

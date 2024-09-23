@@ -48,6 +48,11 @@ public class CommandInventory extends SubCommand {
 
         Player player = (Player) commandSender;
 
+        if (index < 0) {
+            player.sendMessage("ページ番号は1以上で指定してください");
+            return false;
+        }
+
         if (manager.getInventoryLength() <= index) {
             String message = String.format("Index is out of range: %d", index);
             player.chat(message);
@@ -60,13 +65,16 @@ public class CommandInventory extends SubCommand {
     }
 
     public boolean clear() {
-        if (commandSender instanceof Player) {
-            Player player = (Player) commandSender;
-            player.chat("GlobalInventory Cleared");
-        }
 
-        manager.removeAllItems();
-        return true;
+        return false;
+
+//        if (commandSender instanceof Player) {
+//            Player player = (Player) commandSender;
+//            player.chat("GlobalInventory Cleared");
+//        }
+//
+//        manager.removeAllItems();
+//        return true;
     }
 
     public boolean save() {
