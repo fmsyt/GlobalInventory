@@ -6,7 +6,7 @@
 
   <groupId>com.motsuni</groupId>
   <artifactId>GlobalStorage</artifactId>
-  <version>1.20.6-0.4.1</version>
+  <version>master</version>
   <packaging>jar</packaging>
 
   <name>GlobalStorage</name>
@@ -72,6 +72,13 @@
           <artifactId>annotations</artifactId>
           <version>24.1.0</version>
           <scope>compile</scope>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+          <version>3.17.0</version>
       </dependency>
   </dependencies>
 </project>
