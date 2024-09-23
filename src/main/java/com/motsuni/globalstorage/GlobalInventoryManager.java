@@ -101,15 +101,11 @@ public class GlobalInventoryManager {
 
 
     public void save() {
-        Server server = getServer();
-        server.broadcastMessage("保存中... ");
         // https://qiita.com/rushuu_r/items/677bf24db821838a7569#%E3%82%A4%E3%83%B3%E3%83%99%E3%83%B3%E3%83%88%E3%83%AA%E4%BD%9C%E6%88%90
         // https://hub.spigotmc.org/javadocs/spigot/org/bukkit/util/io/BukkitObjectOutputStream.html
 
         this.removeNoItemInGlobalItems();
         this.saveGlobalItems();
-
-        server.broadcastMessage("保存しました");
     }
 
     public void preOpenInventory(Inventory inventory) {
@@ -352,9 +348,6 @@ public class GlobalInventoryManager {
     }
 
     public void openInventory(@NotNull Player player, int inventoryIndex) {
-        UUID uuid = player.getUniqueId();
-        player.sendMessage(String.format("UUID: %s: Index: %d", uuid.toString(), inventoryIndex));
-
         this.openedInventoryMap.put(player.getUniqueId(), inventoryIndex);
         this.preOpenInventory(this.inventories.get(inventoryIndex));
         player.openInventory(this.inventories.get(inventoryIndex));

@@ -8,7 +8,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.NotNull;;
+import org.jetbrains.annotations.NotNull;;import java.util.UUID;
 
 public class StorageListener implements Listener {
 
@@ -25,7 +25,10 @@ public class StorageListener implements Listener {
             return;
         }
 
-        event.getPlayer().sendMessage("Global Inventory Opened");
+//        UUID playerUUID = event.getPlayer().getUniqueId();
+//        String playerName = event.getPlayer().getName();
+//
+//        System.out.println("Global Inventory Opened: UUID=" + playerUUID + " Name=" + playerName);
     }
 
     /**
@@ -65,7 +68,7 @@ public class StorageListener implements Listener {
         // 前のページを指すアイテムがクリックされた場合、次のページを表示する
         if (this.manager.navigatorManager.getPrevious().hasSimilar(clickedItemStack)) {
             Player player = (Player) event.getWhoClicked();
-            player.sendMessage("前のページを表示します");
+//            player.sendMessage("前のページを表示します");
 
             this.manager.openPreviousInventory(player);
             return;
@@ -74,8 +77,7 @@ public class StorageListener implements Listener {
         // 次のページを指すアイテムがクリックされた場合、次のページを表示する
         if (this.manager.navigatorManager.getNext().hasSimilar(clickedItemStack)) {
             Player player = (Player) event.getWhoClicked();
-            player.sendMessage("次のページを表示します");
-            // player.closeInventory();
+//            player.sendMessage("次のページを表示します");
             this.manager.openNextInventory(player);
             return;
         }
@@ -186,7 +188,11 @@ public class StorageListener implements Listener {
 
         Player player = (Player) event.getPlayer();
 
-        event.getPlayer().sendMessage("Global Inventory Closed");
+//        UUID playerUUID = player.getUniqueId();
+//        String playerName = player.getName();
+//
+//        System.out.println("Global Inventory Closed: UUID=" + playerUUID + " Name=" + playerName);
+
         this.manager.closeInventory(player);
         this.manager.save();
     }
