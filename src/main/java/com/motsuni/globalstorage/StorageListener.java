@@ -1,5 +1,6 @@
 package com.motsuni.globalstorage;
 
+import com.motsuni.globalstorage.utils.Logger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,7 +9,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.NotNull;;import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 
 public class StorageListener implements Listener {
 
@@ -82,7 +83,8 @@ public class StorageListener implements Listener {
             return;
         }
 
-        System.out.printf("Current Item: %s: amount=%d%n", clickedItemStack.getType().name(), clickedItemStack.getAmount());
+        // Logger.info(String.format("Current Item: %s: amount=%d", clickedItemStack.getType().name(), clickedItemStack.getAmount()));
+
 
         Inventory clickedInventory = event.getClickedInventory();
         if (clickedInventory == null) {
@@ -97,8 +99,6 @@ public class StorageListener implements Listener {
             this.moveItemToGlobalInventory(globalInventory, clickedItemStack);
             clickedItemStack.setAmount(0);
 
-            System.out.println("Item Moved to Global Inventory");
-
         } else { // !(clickedInventory instanceof PlayerInventory)
 
             // クリックされたインベントリがGlobalInventoryの場合、プレイヤーのインベントリにアイテムを追加する
@@ -108,8 +108,6 @@ public class StorageListener implements Listener {
             ItemStack itemStack = this.moveToPlayerInventory(playerInventory, clickedItemStack);
 
             playerInventory.addItem(itemStack);
-
-            System.out.println("Item Moved to Player Inventory");
         }
 
         this.manager.updateInventory(globalInventory);
@@ -123,11 +121,11 @@ public class StorageListener implements Listener {
     @NotNull
     public ItemStack moveToPlayerInventory(@NotNull PlayerInventory to, @NotNull ItemStack interfaceItemStack) {
 
-        System.out.println("Move to Player Inventory: " + interfaceItemStack.getType().name() + ": amount=" + interfaceItemStack.getAmount() + " lore=" + interfaceItemStack.getItemMeta().getLore());
+        Logger.info(String.format("Move to Player Inventory: %s: amount=%d: lore=%s", interfaceItemStack.getType().name(), interfaceItemStack.getAmount(), interfaceItemStack.getItemMeta().getLore()));
 
         ModelGlobalItem globalItem = this.manager.getGlobalItemFromInterfaceItemStack(interfaceItemStack);
         if (globalItem == null) {
-            System.err.println("Item Not Found in Global Inventory");
+            Logger.error("Item Not Found in Global Inventory");
             return new ItemStack(Material.AIR, 0);
         }
 
@@ -135,13 +133,13 @@ public class StorageListener implements Listener {
 
         int currentAmountOnGlobal = globalItem.getAmount();
         if (currentAmountOnGlobal == 0) {
-            System.err.println("Item Not Found in Global Inventory");
+            Logger.error("Item Not Found in Global Inventory");
             return new ItemStack(Material.AIR, 0);
         }
 
         int first = to.firstEmpty();
         if (first == -1) {
-            System.err.println("Player Inventory is Full");
+            Logger.error("Player Inventory is Full");
             return new ItemStack(Material.AIR, 0);
         }
 
@@ -165,12 +163,13 @@ public class StorageListener implements Listener {
         }
 
         if (moveAmount == 0) {
-            System.err.println("Item Cannot be Moved");
+            // System.err.println("Item Cannot be Moved");
+            Logger.error("Item Cannot be Moved");
             return new ItemStack(Material.AIR, 0);
         }
 
         ItemStack item = globalItem.pullItemStack(moveAmount);
-        System.out.printf("Item Moved: %s: amount=%d%n: left=%d", globalItem.getType().name(), moveAmount, amountLeft);
+        Logger.info(String.format("Item Moved: %s: amount=%d: left=%d", globalItem.getType().name(), moveAmount, amountLeft));
 
         return item;
     }
@@ -188,10 +187,7 @@ public class StorageListener implements Listener {
 
         Player player = (Player) event.getPlayer();
 
-//        UUID playerUUID = player.getUniqueId();
-//        String playerName = player.getName();
-//
-//        System.out.println("Global Inventory Closed: UUID=" + playerUUID + " Name=" + playerName);
+        Logger.info(String.format("Global Inventory Closed: UUID=%s Name=%s", player.getUniqueId(), player.getName()));
 
         this.manager.closeInventory(player);
         this.manager.save();
