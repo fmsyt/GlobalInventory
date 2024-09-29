@@ -3,6 +3,7 @@ package com.motsuni.globalstorage;
 import com.motsuni.globalstorage.command.Command;
 import com.motsuni.globalstorage.itemstack.ItemStackEmpty;
 import com.motsuni.globalstorage.itemstack.NavigatorManager;
+import com.motsuni.globalstorage.utils.Logger;
 import org.bukkit.Server;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
@@ -72,8 +73,7 @@ public class GlobalInventoryManager {
     }
 
     protected void load() {
-        Server server = getServer();
-        server.broadcastMessage("[GlobalStorage] loading... ");
+        Logger.info("loading...");
 
         // find inventory files
         Path path = Paths.get("plugins/GlobalStorage");
@@ -93,8 +93,6 @@ public class GlobalInventoryManager {
             Inventory inventory = this.createInventory();
             this.inventories.add(inventory);
         }
-
-        System.out.println("[GlobalStorage] Inventory Length: " + inventoryLength);
 
         this.organizeInventory();
     }
@@ -175,7 +173,7 @@ public class GlobalInventoryManager {
                 inventory.addItem(itemStack);
             } catch (Exception e) {
                 String itemName = itemStack.getType().name();
-                System.err.println("[GlobalStorage] Failed to add item: " + itemName);
+                Logger.error("Failed to add item: " + itemName);
             }
         }
     }
@@ -240,7 +238,7 @@ public class GlobalInventoryManager {
         } catch (FileAlreadyExistsException e) {
             // nothing to do
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error("Failed to save global items: " + e.getMessage());
         }
 
 
@@ -260,7 +258,7 @@ public class GlobalInventoryManager {
             Files.write(path, Collections.singletonList(base64), StandardCharsets.UTF_8);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error("Failed to save global items: " + e.getMessage());
         }
     }
 
@@ -279,7 +277,7 @@ public class GlobalInventoryManager {
             return;
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error("Failed to load global items: " + e.getMessage());
         }
 
         if (lines == null) {
@@ -301,7 +299,7 @@ public class GlobalInventoryManager {
                 inputStream.close();
 
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+                Logger.error("Failed to load global items: " + e.getMessage());
             }
         }
     }
@@ -398,7 +396,7 @@ public class GlobalInventoryManager {
             newItem.setAmount(amount);
 
             this.globalItems.add(new ModelGlobalItem(newItem));
-            System.out.println("[GlobalStorage] Set item: " + newItem.getType().name() + ", Amount: " + newItem.getAmount());
+            Logger.info(String.format("Set item: %s: amount=%d", newItem.getType().name(), newItem.getAmount()));
 
             return;
         }
@@ -409,7 +407,8 @@ public class GlobalInventoryManager {
                         return;
                     }
                     item.setAmount(amount);
-                    System.out.println("[GlobalStorage] Set item: " + item.getType().name() + ", Amount: " + item.getAmount());
+                    Logger.info(String.format("Set item: %s: amount=%d", item.getType().name(), item.getAmount()));
+
                 }).collect(Collectors.toList());
 
     }
@@ -437,7 +436,7 @@ public class GlobalInventoryManager {
             Inventory inventory = this.inventories.get(0);
             inventory.addItem(modelGlobalItem.getInterfaceItemStack());
 
-            System.out.println("[GlobalStorage] Added item: " + newItem.getType().name() + ", Amount: " + newItem.getAmount());
+            Logger.info(String.format("Added item: %s: amount=%d", newItem.getType().name(), newItem.getAmount()));
 
             return;
         }
@@ -448,7 +447,8 @@ public class GlobalInventoryManager {
                         return;
                     }
                     item.addAmount(amount);
-                    System.out.println("[GlobalStorage] Added item: " + item.getType().name() + ", Amount: " + item.getAmount());
+                    Logger.info(String.format("Added item: %s: amount=%d", item.getType().name(), item.getAmount()));
+
                 }).collect(Collectors.toList());
 
     }
