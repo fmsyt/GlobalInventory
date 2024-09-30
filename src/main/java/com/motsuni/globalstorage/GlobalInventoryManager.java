@@ -527,4 +527,23 @@ public class GlobalInventoryManager {
         });
         this.organizeInventory();
     }
+
+    /**
+     * バックアップを作成する
+     */
+    public void backup() {
+        Path path = Paths.get("plugins/GlobalStorage/items.txt");
+        Date date = new Date();
+
+        // items_YYYYMMDD_HHMMSS.txt
+        String backupFileName = String.format("plugins/GlobalStorage/items_%tY%<tm%<td_%<tH%<tM%<tS.txt", date);
+        Path backupPath = Paths.get(backupFileName);
+
+        try {
+            // allow override
+            Files.copy(path, backupPath);
+        } catch (IOException e) {
+            Logger.error("Failed to backup global items: " + e.getMessage());
+        }
+    }
 }

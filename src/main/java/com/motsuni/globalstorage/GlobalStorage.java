@@ -14,6 +14,6 @@ public final class GlobalStorage extends JavaPlugin {
 
     @Override
     public void onDisable() {
-         // this.globalInventoryManager.save();
+        this.globalInventoryManager.backup();
     }
 }

@@ -27,13 +27,24 @@ public class Command implements CommandExecutor, TabExecutor {
 
         // usage: /globalstorage <give | inventory <open [page] | save | sort [asc | desc]> >
 
+        // boolean isOperator = commandSender.hasPermission("globalstorage.manage");
+        boolean isOperator = false;
+
         if (args.length == 1) {
-            return Arrays.asList("help", "give", "inventory");
+            List<String> common = Arrays.asList("help", "give", "inventory");
+            if (isOperator) {
+                common.add("manage");
+            }
+            return common;
         }
 
         if (args.length == 2) {
             if (args[0].equals("inventory")) {
                 return Arrays.asList("open", "save", "sort");
+            }
+
+            if (args[0].equals("manage") && isOperator) {
+                return Arrays.asList("backup");
             }
         }
 
@@ -69,6 +80,8 @@ public class Command implements CommandExecutor, TabExecutor {
                 return give(commandSender, newArgs);
             case "inventory":
                 return inventory(commandSender, newArgs);
+            case "manage":
+                return manage(commandSender, newArgs);
             default:
                 return false;
         }
@@ -87,6 +100,12 @@ public class Command implements CommandExecutor, TabExecutor {
         player.sendMessage("/globalstorage inventory sort [asc|desc]: インベントリをソートする");
         // player.sendMessage("/globalstorage inventory clear: インベントリの中身をすべて削除する");
 
+        // boolean isOperator = player.hasPermission("globalstorage.manage");
+        boolean isOperator = false;
+        if (isOperator) {
+            player.sendMessage("/globalstorage manage backup: インベントリをバックアップする");
+        }
+
         return true;
     }
 
@@ -100,5 +119,12 @@ public class Command implements CommandExecutor, TabExecutor {
 
     private boolean inventory(CommandSender commandSender, String[] args) {
         return new CommandInventory(manager, commandSender, args).invoke();
+    }
+
+    private boolean manage(CommandSender commandSender, String[] args) {
+        if (!commandSender.isOp()) {
+            return false;
+        }
+        return new CommandManage(manager, commandSender, args).invoke();
     }
 }
