@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ModelGlobalItem implements Serializable {
 
@@ -23,17 +24,26 @@ public class ModelGlobalItem implements Serializable {
      */
     protected int index = -1;
 
+    protected UUID uuid;
+
     public ModelGlobalItem(@NotNull ItemStack itemStack) {
-        this(itemStack, itemStack.getAmount());
+        this(itemStack, itemStack.getAmount(), -1);
     }
 
     public ModelGlobalItem(@NotNull ItemStack itemStack, int amount) {
+        this(itemStack, amount, -1);
+    }
+
+    public ModelGlobalItem(@NotNull ItemStack itemStack, int amount, int index) {
         this.originalItemStack = itemStack.clone();
 
         this.interfaceItemStack = itemStack.clone();
         this.interfaceItemStack.setAmount(1);
 
         this.amount = amount;
+        this.index = index;
+
+        this.uuid = UUID.randomUUID();
 
         ItemMeta meta = this.interfaceItemStack.getItemMeta();
         if (meta != null) {

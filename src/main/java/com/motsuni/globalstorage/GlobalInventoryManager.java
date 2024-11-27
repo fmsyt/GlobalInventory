@@ -47,6 +47,8 @@ public class GlobalInventoryManager {
 
     protected Map<UUID, Integer> openedInventoryMap = new HashMap<>();
 
+    private int autoIncrementIndex = 0;
+
     public GlobalInventoryManager(@NotNull JavaPlugin plugin) {
         this.navigatorManager = new NavigatorManager();
 
