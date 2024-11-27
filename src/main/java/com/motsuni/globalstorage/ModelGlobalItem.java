@@ -171,4 +171,8 @@ public class ModelGlobalItem implements Serializable {
 
         return item;
     }
+
+    public UUID getUuid() {
+        return this.uuid;
+    }
 }
