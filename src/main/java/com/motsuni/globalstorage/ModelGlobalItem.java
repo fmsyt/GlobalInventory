@@ -18,6 +18,11 @@ public class ModelGlobalItem implements Serializable {
 
     protected int amount;
 
+    /**
+     * ItemStack同士の比較は失敗することがあるため、任意の番号を割り振る
+     */
+    protected int index = -1;
+
     public ModelGlobalItem(@NotNull ItemStack itemStack) {
         this(itemStack, itemStack.getAmount());
     }
@@ -165,5 +170,18 @@ public class ModelGlobalItem implements Serializable {
 
 
         return item;
+    }
+
+
+    public int getIndex() {
+        return this.index;
+    }
+
+    public void setIndex(int index) {
+        if (index < 0) {
+            throw new IllegalArgumentException("index は0以上である必要があります");
+        }
+
+        this.index = index;
     }
 }
