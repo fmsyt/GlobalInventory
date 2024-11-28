@@ -14,6 +14,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -295,6 +296,7 @@ public class GlobalInventoryManager {
                 int size = inputStream.readInt();
                 for (int i = 0; i < size; i++) {
                     ModelGlobalItem item = (ModelGlobalItem) inputStream.readObject();
+                    item.setIndex(this.nextIndex());
                     this.globalItems.add(item);
                 }
 
@@ -319,7 +321,7 @@ public class GlobalInventoryManager {
                 .orElse(null);
 
         if (globalItem == null) {
-            this.globalItems.add(new ModelGlobalItem(itemStack, itemStack.getAmount()));
+            this.globalItems.add(this.createModelGlobalItem(itemStack));
             return;
         }
 
@@ -397,7 +399,7 @@ public class GlobalInventoryManager {
             ItemStack newItem = itemStack.clone();
             newItem.setAmount(amount);
 
-            this.globalItems.add(new ModelGlobalItem(newItem));
+            this.globalItems.add(this.createModelGlobalItem(newItem));
             Logger.info(String.format("Set item: %s: amount=%d", newItem.getType().name(), newItem.getAmount()));
 
             return;
@@ -431,7 +433,7 @@ public class GlobalInventoryManager {
             ItemStack newItem = itemStack.clone();
             newItem.setAmount(amount);
 
-            ModelGlobalItem modelGlobalItem = new ModelGlobalItem(newItem);
+            ModelGlobalItem modelGlobalItem = this.createModelGlobalItem(newItem);
 
             this.globalItems.add(modelGlobalItem);
 
@@ -547,5 +549,14 @@ public class GlobalInventoryManager {
         } catch (IOException e) {
             Logger.error("Failed to backup global items: " + e.getMessage());
         }
+    }
+
+    @Contract("_ -> new")
+    private @NotNull ModelGlobalItem createModelGlobalItem(@NotNull ItemStack itemStack) {
+        return new ModelGlobalItem(itemStack, itemStack.getAmount(), this.nextIndex());
+    }
+
+    private int nextIndex() {
+        return ++this.autoIncrementIndex;
     }
 }
