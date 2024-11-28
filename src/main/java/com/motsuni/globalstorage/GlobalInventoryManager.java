@@ -476,7 +476,7 @@ public class GlobalInventoryManager {
     @Nullable
     public ModelGlobalItem getGlobalItemFromInterfaceItemStack(@NotNull ItemStack itemStack) {
         ModelGlobalItem sameItem = this.globalItems.stream()
-                .filter(item -> item != null && item.isSimilarInterfaceItemStack(itemStack))
+                .filter(item -> item != null && item.getInterfaceItemStack().equals(itemStack))
                 .findFirst()
                 .orElse(null);
 
