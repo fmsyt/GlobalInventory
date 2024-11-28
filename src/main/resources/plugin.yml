@@ -5,6 +5,6 @@ api-version: '1.20'
 commands:
   globalstorage:
     description: Get interface of GlobalStorage
-    usage: /globalstorage <give | inventory <open [page] | save | sort [asc | desc]> >
+    usage: /globalstorage <give | pull <管理番号> [all|<個数>] | inventory <open [ページ番号] | save | sort [asc | desc]> >
     aliases:
       - gs

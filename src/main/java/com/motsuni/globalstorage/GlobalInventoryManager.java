@@ -485,6 +485,14 @@ public class GlobalInventoryManager {
         return sameItem;
     }
 
+    @Nullable
+    public ModelGlobalItem getGlobalItemFromIndex(int index) {
+        return this.globalItems.stream()
+                .filter(item -> item != null && item.getIndex() == index)
+                .findFirst()
+                .orElse(null);
+    }
+
     public int getInventoryLength() {
         return this.inventories.size();
     }

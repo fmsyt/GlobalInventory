@@ -1,6 +1,7 @@
 package com.motsuni.globalstorage.command;
 
 import com.motsuni.globalstorage.GlobalInventoryManager;
+import com.motsuni.globalstorage.ModelGlobalItem;
 import com.motsuni.globalstorage.itemstack.ItemStackKey;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,7 +32,7 @@ public class Command implements CommandExecutor, TabExecutor {
         boolean isOperator = false;
 
         if (args.length == 1) {
-            List<String> common = Arrays.asList("help", "give", "inventory");
+            List<String> common = Arrays.asList("help", "give", "inventory", "pull");
             if (isOperator) {
                 common.add("manage");
             }
@@ -82,6 +83,8 @@ public class Command implements CommandExecutor, TabExecutor {
                 return inventory(commandSender, newArgs);
             case "manage":
                 return manage(commandSender, newArgs);
+            case "pull":
+                return pull(commandSender, newArgs);
             default:
                 return false;
         }
@@ -95,9 +98,10 @@ public class Command implements CommandExecutor, TabExecutor {
         Player player = (Player) commandSender;
         player.sendMessage("GlobalStorage Help");
         player.sendMessage("/globalstorage give: インベントリを開くためのアイテムを受け取る");
-        player.sendMessage("/globalstorage inventory open [page]: インベントリを開く");
+        player.sendMessage("/globalstorage inventory open [<ページ番号>]: インベントリを開く");
         player.sendMessage("/globalstorage inventory save: インベントリを保存する");
         player.sendMessage("/globalstorage inventory sort [asc|desc]: インベントリをソートする");
+        player.sendMessage("/globalstorage pull <管理番号> [<個数>]: アイテムを引き出す");
         // player.sendMessage("/globalstorage inventory clear: インベントリの中身をすべて削除する");
 
         // boolean isOperator = player.hasPermission("globalstorage.manage");
@@ -126,5 +130,68 @@ public class Command implements CommandExecutor, TabExecutor {
             return false;
         }
         return new CommandManage(manager, commandSender, args).invoke();
+    }
+
+    private boolean pull(CommandSender commandSender, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
+
+        // TODO: 足元にアイテムを置くまでの暫定対応
+        if (!(commandSender instanceof Player)) {
+            return true;
+        }
+
+        ModelGlobalItem item = manager.getGlobalItemFromIndex(Integer.parseInt(args[0]));
+        if (item == null) {
+            if (commandSender instanceof Player) {
+                Player player = (Player) commandSender;
+                player.sendMessage("アイテムが見つかりません");
+            }
+
+            return true;
+        }
+
+        int amount = item.getMaxStackSize();
+        if (args.length > 1) {
+            String arg = args[1];
+            if (arg.matches("[0-9]+")) {
+                amount = Integer.parseInt(arg);
+            } else {
+                // ほかの入力を受け付けるならこの辺で処理
+            }
+        }
+
+        int maxStackSize = item.getMaxStackSize();
+
+        // TODO: 足元にアイテムを置くまでの暫定対応
+        if (amount > maxStackSize) {
+            if (commandSender instanceof Player) {
+                Player player = (Player) commandSender;
+                player.sendMessage("引き出し可能な最大数を超えています");
+            }
+            return false;
+        }
+        while (amount > maxStackSize) {
+            ItemStack itemStack = item.pullItemStack(maxStackSize);
+
+            if (commandSender instanceof Player) {
+                Player player = (Player) commandSender;
+                player.getInventory().addItem(itemStack);
+            }
+
+            amount -= maxStackSize;
+        }
+
+        ItemStack itemStack = item.pullItemStack(amount);
+
+        if (commandSender instanceof Player) {
+            Player player = (Player) commandSender;
+            player.getInventory().addItem(itemStack);
+        }
+
+        this.manager.organizeInventory();
+
+        return true;
     }
 }
