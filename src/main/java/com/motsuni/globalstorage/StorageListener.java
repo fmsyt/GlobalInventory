@@ -187,7 +187,7 @@ public class StorageListener implements Listener {
 
         Player player = (Player) event.getPlayer();
 
-        Logger.info(String.format("Global Inventory Closed: UUID=%s Name=%s", player.getUniqueId(), player.getName()));
+//        Logger.info(String.format("Global Inventory Closed: UUID=%s Name=%s", player.getUniqueId(), player.getName()));
 
         this.manager.closeInventory(player);
         this.manager.save();
