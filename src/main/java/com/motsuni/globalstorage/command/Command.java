@@ -137,7 +137,7 @@ public class Command implements CommandExecutor, TabExecutor {
             return false;
         }
 
-        // TODO: 足元にアイテムを置くまでの暫定対応
+        // TODO: ほかにどのClassが対応しているか知らないからPlayerに限定
         if (!(commandSender instanceof Player)) {
             return true;
         }
@@ -165,19 +165,12 @@ public class Command implements CommandExecutor, TabExecutor {
         int maxStackSize = item.getMaxStackSize();
 
         // TODO: 足元にアイテムを置くまでの暫定対応
-        if (amount > maxStackSize) {
-            if (commandSender instanceof Player) {
-                Player player = (Player) commandSender;
-                player.sendMessage("引き出し可能な最大数を超えています");
-            }
-            return false;
-        }
         while (amount > maxStackSize) {
             ItemStack itemStack = item.pullItemStack(maxStackSize);
 
             if (commandSender instanceof Player) {
                 Player player = (Player) commandSender;
-                player.getInventory().addItem(itemStack);
+                player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
             }
 
             amount -= maxStackSize;
@@ -187,7 +180,7 @@ public class Command implements CommandExecutor, TabExecutor {
 
         if (commandSender instanceof Player) {
             Player player = (Player) commandSender;
-            player.getInventory().addItem(itemStack);
+            player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
         }
 
         this.manager.organizeInventory();
