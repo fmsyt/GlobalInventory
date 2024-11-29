@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,11 +29,10 @@ public class Command implements CommandExecutor, TabExecutor {
 
         // usage: /globalstorage <give | inventory <open [page] | save | sort [asc | desc]> >
 
-        // boolean isOperator = commandSender.hasPermission("globalstorage.manage");
-        boolean isOperator = false;
+        boolean isOperator = commandSender.isOp();
 
         if (args.length == 1) {
-            List<String> common = Arrays.asList("help", "give", "inventory", "pull");
+            List<String> common = new ArrayList<>(Arrays.asList("help", "give", "inventory", "pull"));
             if (isOperator) {
                 common.add("manage");
             }
@@ -45,7 +45,7 @@ public class Command implements CommandExecutor, TabExecutor {
             }
 
             if (args[0].equals("manage") && isOperator) {
-                return Arrays.asList("backup");
+                return List.of("backup");
             }
         }
 
@@ -104,9 +104,7 @@ public class Command implements CommandExecutor, TabExecutor {
         player.sendMessage("/globalstorage pull <管理番号> [<個数>]: アイテムを引き出す");
         // player.sendMessage("/globalstorage inventory clear: インベントリの中身をすべて削除する");
 
-        // boolean isOperator = player.hasPermission("globalstorage.manage");
-        boolean isOperator = false;
-        if (isOperator) {
+        if (commandSender.isOp()) {
             player.sendMessage("/globalstorage manage backup: インベントリをバックアップする");
         }
 

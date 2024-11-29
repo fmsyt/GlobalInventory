@@ -543,7 +543,7 @@ public class GlobalInventoryManager {
     /**
      * バックアップを作成する
      */
-    public void backup() {
+    public @Nullable String backup() {
         Path path = Paths.get("plugins/GlobalStorage/items.txt");
         Date date = new Date();
 
@@ -556,7 +556,10 @@ public class GlobalInventoryManager {
             Files.copy(path, backupPath);
         } catch (IOException e) {
             Logger.error("Failed to backup global items: " + e.getMessage());
+            return null;
         }
+
+        return backupFileName;
     }
 
     @Contract("_ -> new")
