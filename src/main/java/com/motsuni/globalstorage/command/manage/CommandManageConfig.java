@@ -1,10 +1,12 @@
 package com.motsuni.globalstorage.command.manage;
 
 import com.motsuni.globalstorage.GlobalInventoryManager;
+import com.motsuni.globalstorage.automation.AutomationManager;
 import com.motsuni.globalstorage.command.SubCommand;
 import com.motsuni.globalstorage.config.PluginConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public class CommandManageConfig extends SubCommand {
@@ -105,12 +107,15 @@ public class CommandManageConfig extends SubCommand {
         this.manager.getConfig().setBackupInterval(interval);
         this.manager.getConfig().save();
 
+        AutomationManager.getInstance().reloadAutoBackup();
+
         sendMessageToOperator("バックアップの間隔が変更されました: " + tickToString(interval));
 
         return true;
     }
 
-    private String tickToString(int tick) {
+    @Contract(pure = true)
+    private @NotNull String tickToString(int tick) {
         int sec = tick / 20;
         int min = sec / 60;
         int hour = min / 60;

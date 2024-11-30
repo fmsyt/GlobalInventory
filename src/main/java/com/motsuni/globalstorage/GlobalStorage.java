@@ -1,7 +1,6 @@
 package com.motsuni.globalstorage;
 
-import com.motsuni.globalstorage.automation.AutoBackup;
-import com.motsuni.globalstorage.automation.Experiment;
+import com.motsuni.globalstorage.automation.AutomationManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class GlobalStorage extends JavaPlugin {
@@ -13,13 +12,8 @@ public final class GlobalStorage extends JavaPlugin {
         this.globalInventoryManager = new GlobalInventoryManager(this);
         this.globalInventoryManager.init();
 
-        var interval = this.globalInventoryManager.config.getBackupInterval();
-
-        // 2時間ごとにバックアップを作成
-        new AutoBackup(this.globalInventoryManager).runTaskTimer(this, 0, interval);
-
-//        // 1秒ごとに実験
-//        new Experiment().runTaskTimer(this, 0, tick);
+        AutomationManager automationManager = AutomationManager.getInstance(this, this.globalInventoryManager);
+        automationManager.run();
     }
 
     @Override
