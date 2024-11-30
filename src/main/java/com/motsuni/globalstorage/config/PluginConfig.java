@@ -4,8 +4,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class PluginConfig {
     protected Plugin plugin;
     protected FileConfiguration config;
@@ -16,10 +14,10 @@ public class PluginConfig {
         this.config = plugin.getConfig();
 
         // NOTE: プレイヤーが保持できるアイテムの最大数を初期値に設定
-        this.config.addDefault(EnumConfigKeys.MAX_PULL_AMOUNT.getKey(), 64 * 9 * 5);
+        this.config.addDefault(EnumConfigKeys.MAX_PULL_AMOUNT.getKey(), getDefaultMaxPullAmount());
 
-        // バックアップを作成する時間の初期値を設定
-        this.config.addDefault(EnumConfigKeys.BACKUP_TIMES.getKey(), List.of("0:00"));
+        // NOTE: バックアップを作成する時間を初期値に設定
+        this.config.addDefault(EnumConfigKeys.BACKUP_INTERVAL.getKey(), getDefaultBackupInterval());
 
         this.save();
     }
@@ -53,12 +51,20 @@ public class PluginConfig {
         this.config.set(EnumConfigKeys.MAX_PULL_AMOUNT.getKey(), maxPullAmount);
     }
 
+    public static int getDefaultMaxPullAmount() {
+        return 64 * 9 * 5;
+    }
+
     /**
      * バックアップを作成する時間を取得
      * @see com.motsuni.globalstorage.command.CommandManage
      */
-    public List<String> getBackupTimes() {
-        return this.config.getStringList(EnumConfigKeys.BACKUP_TIMES.getKey());
+    public int getBackupInterval() {
+        return this.config.getInt(EnumConfigKeys.BACKUP_INTERVAL.getKey());
+    }
+
+    public static int getDefaultBackupInterval() {
+        return 20 * 60 * 60 * 2;
     }
 
     /**
@@ -66,14 +72,10 @@ public class PluginConfig {
      * @see com.motsuni.globalstorage.command.CommandManage
      * @throws IllegalArgumentException 引数がH:mm:ss形式でない場合
      */
-    public void setBackupTimes(@NotNull List<String> backupTimes) {
-        // check format if it is H:mm:ss
-        for (String time : backupTimes) {
-            if (!time.matches("^([01]?[0-9]|2[0-3]):[0-5][0-9]$")) {
-                throw new IllegalArgumentException("Invalid time format: " + time);
-            }
+    public void setBackupInterval(int tick) {
+        if (tick < 0) {
+            throw new IllegalArgumentException("Invalid backup interval: " + tick);
         }
-
-        this.config.set(EnumConfigKeys.BACKUP_TIMES.getKey(), backupTimes);
+        this.config.set(EnumConfigKeys.BACKUP_INTERVAL.getKey(), tick);
     }
 }

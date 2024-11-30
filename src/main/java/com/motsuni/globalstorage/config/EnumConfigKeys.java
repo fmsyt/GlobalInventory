@@ -2,7 +2,7 @@ package com.motsuni.globalstorage.config;
 
 public enum EnumConfigKeys {
     MAX_PULL_AMOUNT("item.max_pull_amount"),
-    BACKUP_TIMES("server.backup_times");
+    BACKUP_INTERVAL("server.backup_interval");
 
     private final String key;
 

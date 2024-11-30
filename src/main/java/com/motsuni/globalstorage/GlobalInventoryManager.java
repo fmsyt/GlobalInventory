@@ -552,6 +552,7 @@ public class GlobalInventoryManager {
 
     /**
      * バックアップを作成する
+     * @return バックアップファイル名
      */
     public @Nullable String backup() {
         Path path = Paths.get("plugins/GlobalStorage/items.txt");
@@ -564,6 +565,7 @@ public class GlobalInventoryManager {
         try {
             // allow override
             Files.copy(path, backupPath);
+            Logger.info("Backup global items: " + backupFileName);
         } catch (IOException e) {
             Logger.error("Failed to backup global items: " + e.getMessage());
             return null;

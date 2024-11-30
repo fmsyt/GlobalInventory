@@ -55,7 +55,7 @@ public class Command implements CommandExecutor, TabExecutor {
             }
 
             if (args[0].equals("manage") && args[1].equals("config") && isOperator) {
-                return Arrays.asList("max_pull_amount", "backup_time");
+                return Arrays.asList("max_pull_amount", "backup_interval");
             }
         }
 
@@ -110,7 +110,7 @@ public class Command implements CommandExecutor, TabExecutor {
 
         if (commandSender.isOp()) {
             player.sendMessage("/globalstorage manage backup: インベントリをバックアップする");
-            player.sendMessage("/globalstorage manage config <max_pull_amount|backup_time> [value]: 設定を変更する");
+            player.sendMessage("/globalstorage manage config <max_pull_amount|backup_interval> [value]: 設定を変更する");
         }
 
         return true;
