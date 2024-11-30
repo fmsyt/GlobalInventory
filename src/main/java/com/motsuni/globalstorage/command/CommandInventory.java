@@ -55,7 +55,7 @@ public class CommandInventory extends SubCommand {
 
         if (manager.getInventoryLength() <= index) {
             String message = String.format("Index is out of range: %d", index);
-            player.chat(message);
+            player.sendMessage(message);
             return true;
         }
 
@@ -70,7 +70,7 @@ public class CommandInventory extends SubCommand {
 
 //        if (commandSender instanceof Player) {
 //            Player player = (Player) commandSender;
-//            player.chat("GlobalInventory Cleared");
+//            player.sendMessage("GlobalInventory Cleared");
 //        }
 //
 //        manager.removeAllItems();
@@ -80,7 +80,7 @@ public class CommandInventory extends SubCommand {
     public boolean save() {
         if (commandSender instanceof Player) {
             Player player = (Player) commandSender;
-            player.chat("GlobalInventory Saved");
+            player.sendMessage("GlobalInventory Saved");
         }
 
         manager.save();
@@ -91,7 +91,7 @@ public class CommandInventory extends SubCommand {
         if (order == null) {
             manager.sortByType();
             if (commandSender instanceof Player) {
-                ((Player) commandSender).chat("ソートしました");
+                commandSender.sendMessage("ソートしました");
             }
 
             return true;
@@ -104,7 +104,7 @@ public class CommandInventory extends SubCommand {
 
         manager.sortByName(_order);
         if (commandSender instanceof Player) {
-            ((Player) commandSender).chat("ソートしました");
+            commandSender.sendMessage("ソートしました");
         }
 
         return true;

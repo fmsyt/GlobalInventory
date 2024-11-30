@@ -19,28 +19,51 @@ public class ModelGlobalItem implements Serializable {
 
     protected int amount;
 
+    protected transient int index = -1;
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        if (index < 0) {
+            throw new IllegalArgumentException("index must be greater than or equal to 0");
+        }
+        this.index = index;
+    }
+
     protected UUID uuid;
 
     public ModelGlobalItem(@NotNull ItemStack itemStack) {
-        this(itemStack, itemStack.getAmount());
+        this(itemStack, itemStack.getAmount(), -1);
     }
 
     public ModelGlobalItem(@NotNull ItemStack itemStack, int amount) {
+        this(itemStack, amount, -1);
+    }
+
+    public ModelGlobalItem(@NotNull ItemStack itemStack, int amount, int index) {
         this.originalItemStack = itemStack.clone();
 
         this.interfaceItemStack = itemStack.clone();
         this.interfaceItemStack.setAmount(1);
 
         this.amount = amount;
+        this.index = index;
 
         this.uuid = UUID.randomUUID();
 
         ItemMeta meta = this.interfaceItemStack.getItemMeta();
         if (meta != null) {
             if (meta.getLore() != null) {
+                if (this.index > 0) {
+                    meta.getLore().add("管理番号: " + this.index);
+                }
                 meta.getLore().add("保管数: " + this.amount);
             } else {
                 List<String> lore = new ArrayList<>();
+                if (this.index > 0) {
+                    lore.add("管理番号: " + this.index);
+                }
                 lore.add("保管数: " + this.amount);
 
                 meta.setLore(lore);
@@ -76,11 +99,17 @@ public class ModelGlobalItem implements Serializable {
             }
 
             if (currentLore != null) {
+                if (this.index > 0) {
+                    currentLore.add("管理番号: " + this.index);
+                }
                 currentLore.add("保管数: " + this.amount);
                 meta.setLore(currentLore);
 
             } else {
                 List<String> lore = new ArrayList<>();
+                if (this.index > 0) {
+                    lore.add("管理番号: " + this.index);
+                }
                 lore.add("保管数: " + this.amount);
 
                 meta.setLore(lore);
