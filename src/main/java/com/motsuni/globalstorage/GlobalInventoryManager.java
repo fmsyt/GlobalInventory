@@ -1,6 +1,7 @@
 package com.motsuni.globalstorage;
 
 import com.motsuni.globalstorage.command.Command;
+import com.motsuni.globalstorage.config.PluginConfig;
 import com.motsuni.globalstorage.itemstack.ItemStackEmpty;
 import com.motsuni.globalstorage.itemstack.NavigatorManager;
 import com.motsuni.globalstorage.utils.Logger;
@@ -40,6 +41,7 @@ public class GlobalInventoryManager {
 
     protected Plugin plugin;
     protected PluginManager manager;
+    protected PluginConfig config;
 
     protected List<ModelGlobalItem> globalItems;
     protected List<Inventory> inventories;
@@ -61,13 +63,21 @@ public class GlobalInventoryManager {
         this.plugin = plugin;
         this.manager = server.getPluginManager();
 
+        this.config = new PluginConfig(plugin);
+
         PluginCommand gi = plugin.getCommand("globalstorage");
         if (gi != null) {
             gi.setExecutor(new Command(this));
         }
     }
 
+    public Plugin getPlugin() {
+        return this.plugin;
+    }
 
+    public PluginConfig getConfig() {
+        return this.config;
+    }
 
     public void init() {
         this.load();
@@ -542,6 +552,7 @@ public class GlobalInventoryManager {
 
     /**
      * バックアップを作成する
+     * @return バックアップファイル名
      */
     public @Nullable String backup() {
         Path path = Paths.get("plugins/GlobalStorage/items.txt");
@@ -554,6 +565,7 @@ public class GlobalInventoryManager {
         try {
             // allow override
             Files.copy(path, backupPath);
+            Logger.info("Backup global items: " + backupFileName);
         } catch (IOException e) {
             Logger.error("Failed to backup global items: " + e.getMessage());
             return null;

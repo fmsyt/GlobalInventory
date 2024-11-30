@@ -45,13 +45,17 @@ public class Command implements CommandExecutor, TabExecutor {
             }
 
             if (args[0].equals("manage") && isOperator) {
-                return List.of("backup");
+                return List.of("backup", "config");
             }
         }
 
         if (args.length == 3) {
             if (args[0].equals("inventory") && args[1].equals("sort")) {
                 return Arrays.asList("asc", "desc");
+            }
+
+            if (args[0].equals("manage") && args[1].equals("config") && isOperator) {
+                return Arrays.asList("max_pull_amount", "backup_interval");
             }
         }
 
@@ -106,6 +110,7 @@ public class Command implements CommandExecutor, TabExecutor {
 
         if (commandSender.isOp()) {
             player.sendMessage("/globalstorage manage backup: インベントリをバックアップする");
+            player.sendMessage("/globalstorage manage config <max_pull_amount|backup_interval> [value]: 設定を変更する");
         }
 
         return true;
@@ -158,6 +163,16 @@ public class Command implements CommandExecutor, TabExecutor {
             } else {
                 // ほかの入力を受け付けるならこの辺で処理
             }
+        }
+
+        int configMaxPullAmount = this.manager.getConfig().getMaxPullAmount();
+        if (amount > configMaxPullAmount) {
+            if (commandSender instanceof Player) {
+                Player player = (Player) commandSender;
+                player.sendMessage(String.format("引き出し可能な最大数は %d 個です", configMaxPullAmount));
+            }
+
+            return true;
         }
 
         int maxStackSize = item.getMaxStackSize();
